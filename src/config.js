@@ -8,8 +8,8 @@ const IS_PRODUCTION = true; // 👈 Change this to true when deploying
 // ==================== URL CONFIGURATION ====================
 const URLS = {
   production: {
-    api: 'https://your-render-app.onrender.com', // Your Render backend URL
-    frontend: 'https://your-vercel-app.vercel.app', // Your Vercel frontend URL
+    api: import.meta.env.VITE_API_URL || 'https://aurora-weather-backend.onrender.com', // Your Render backend URL
+    frontend: import.meta.env.VITE_FRONTEND_URL || 'https://aurora-weather-swart.vercel.app', // Your Vercel frontend URL
   },
   development: {
     api: 'http://localhost:5000',
