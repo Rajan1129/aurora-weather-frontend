@@ -10,6 +10,7 @@ import { useWeather } from '../../context/WeatherContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { API_URL } from "../../config";
 
 export function Navbar({ onMenuClick }) {
   const { user, logout } = useAuth();
@@ -65,8 +66,10 @@ export function Navbar({ onMenuClick }) {
     setIsSearching(true);
     try {
       const token = localStorage.getItem('token');
+      console.log("API_URL =", API_URL);
+      console.log("ENV =", import.meta.env.VITE_API_URL);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/cities/search`,
+       `${API_URL}/api/cities/search`,
         { 
           params: { q: query },
           headers: token ? { Authorization: `Bearer ${token}` } : {},
