@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Menu, Search, Bell, User, Sun, Moon, LogOut, 
+  Menu, Search, Bell, User, Sun, Moon, 
   Sparkles, MapPin, X, Loader
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -66,10 +66,8 @@ export function Navbar({ onMenuClick }) {
     setIsSearching(true);
     try {
       const token = localStorage.getItem('token');
-      console.log("API_URL =", API_URL);
-      console.log("ENV =", import.meta.env.VITE_API_URL);
       const response = await axios.get(
-       `${API_URL}/api/cities/search`,
+        `${API_URL}/api/cities/search`,
         { 
           params: { q: query },
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -149,7 +147,7 @@ export function Navbar({ onMenuClick }) {
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
       <div className="px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Left */}
+          {/* Left - Menu & Brand */}
           <div className="flex items-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -177,8 +175,8 @@ export function Navbar({ onMenuClick }) {
             </div>
           </div>
 
-          {/* Center - Search */}
-          <div className="flex-1 max-w-xl mx-4" ref={searchRef}>
+          {/* Center - Search (Expands on mobile with max-lg:flex-1) */}
+          <div className="flex-1 max-lg:flex-1 max-w-xl mx-2 md:mx-4" ref={searchRef}>
             <form onSubmit={handleSearchSubmit} className="relative">
               <input
                 type="text"
@@ -186,7 +184,7 @@ export function Navbar({ onMenuClick }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
-                className="w-full px-4 py-2 pl-10 pr-10 bg-gray-100 dark:bg-gray-800 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-2 pl-10 pr-10 bg-gray-100 dark:bg-gray-800 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
               />
               <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
               {searchQuery && (
@@ -249,7 +247,7 @@ export function Navbar({ onMenuClick }) {
             </form>
           </div>
 
-          {/* Right */}
+          {/* Right - Icons (Logout removed entirely here) */}
           <div className="flex items-center gap-1">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -276,7 +274,6 @@ export function Navbar({ onMenuClick }) {
                 )}
               </motion.button>
 
-              {/* Notification Dropdown */}
               <AnimatePresence>
                 {showNotifications && (
                   <motion.div
@@ -285,28 +282,16 @@ export function Navbar({ onMenuClick }) {
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
                   >
-                    {/* Header */}
+                    {/* [Notification content stays exactly the same] */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                       <span className="font-semibold text-sm">Notifications</span>
                       <div className="flex items-center gap-2">
                         {unreadCount > 0 && (
-                          <button
-                            onClick={markAllAsRead}
-                            className="text-xs text-blue-500 hover:text-blue-600 transition-colors"
-                          >
-                            Mark all read
-                          </button>
+                          <button onClick={markAllAsRead} className="text-xs text-blue-500 hover:text-blue-600 transition-colors">Mark all read</button>
                         )}
-                        <button
-                          onClick={clearNotifications}
-                          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          Clear all
-                        </button>
+                        <button onClick={clearNotifications} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Clear all</button>
                       </div>
                     </div>
-
-                    {/* Notification List */}
                     <div className="max-h-80 overflow-y-auto">
                       {notifications.length === 0 ? (
                         <div className="p-8 text-center">
@@ -316,46 +301,22 @@ export function Navbar({ onMenuClick }) {
                         </div>
                       ) : (
                         notifications.map((notification) => (
-                          <div
-                            key={notification.id}
-                            onClick={() => markAsRead(notification.id)}
-                            className={`
-                              px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer
-                              ${!notification.read ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''}
-                              border-b border-gray-100 dark:border-gray-800 last:border-0
-                            `}
-                          >
+                          <div key={notification.id} onClick={() => markAsRead(notification.id)} className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${!notification.read ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''} border-b border-gray-100 dark:border-gray-800 last:border-0`}>
                             <div className="flex items-start gap-3">
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                  {notification.title}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                  {notification.message}
-                                </p>
-                                <p className="text-[10px] text-gray-400 mt-1">
-                                  {new Date().toLocaleTimeString()}
-                                </p>
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{notification.title}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{notification.message}</p>
+                                <p className="text-[10px] text-gray-400 mt-1">{new Date().toLocaleTimeString()}</p>
                               </div>
-                              {!notification.read && (
-                                <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5"></div>
-                              )}
+                              {!notification.read && (<div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5"></div>)}
                             </div>
                           </div>
                         ))
                       )}
                     </div>
-
-                    {/* Footer */}
                     {notifications.length > 0 && (
                       <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-                        <Link
-                          to="/notifications"
-                          onClick={() => setShowNotifications(false)}
-                          className="text-xs text-blue-500 hover:text-blue-600 transition-colors block text-center"
-                        >
-                          View all notifications
-                        </Link>
+                        <Link to="/notifications" onClick={() => setShowNotifications(false)} className="text-xs text-blue-500 hover:text-blue-600 transition-colors block text-center">View all notifications</Link>
                       </div>
                     )}
                   </motion.div>
@@ -363,6 +324,7 @@ export function Navbar({ onMenuClick }) {
               </AnimatePresence>
             </div>
 
+            {/* Profile Avatar Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -375,15 +337,6 @@ export function Navbar({ onMenuClick }) {
               <span className="hidden md:inline text-sm font-medium">
                 {user?.firstName || 'Guest'}
               </span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={logout}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
             </motion.button>
           </div>
         </div>
