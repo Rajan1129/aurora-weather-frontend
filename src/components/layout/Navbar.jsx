@@ -145,10 +145,11 @@ export function Navbar({ onMenuClick }) {
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
-      <div className="px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Left - Menu & Brand */}
-          <div className="flex items-center gap-4">
+      <div className="px-3 md:px-4"> {/* Reduced horizontal padding slightly */}
+        <div className="flex items-center justify-between h-16 gap-2"> {/* Added gap-2 to control spacing */}
+          
+          {/* LEFT: Menu, Logo, Location (Desktop Only) */}
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -159,15 +160,17 @@ export function Navbar({ onMenuClick }) {
             </motion.button>
 
             <Link to="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shrink-0">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent hidden sm:block">
+              {/* Hide text on very small screens to save space */}
+              <span className="hidden sm:block text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Aurora
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm">
+            {/* Hide location on mobile to save space for Search */}
+            <div className="hidden lg:flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm">
               <MapPin className="w-3 h-3" />
               <span className="font-medium truncate max-w-[120px]">
                 {selectedLocation?.city || 'Select Location'}
@@ -175,16 +178,16 @@ export function Navbar({ onMenuClick }) {
             </div>
           </div>
 
-          {/* Center - Search (Expands on mobile with max-lg:flex-1) */}
-          <div className="flex-1 max-lg:flex-1 max-w-xl mx-2 md:mx-4" ref={searchRef}>
-            <form onSubmit={handleSearchSubmit} className="relative">
+          {/* CENTER: Search (Maximized space on Mobile) */}
+          <div className="flex-1 min-w-0 max-w-xl mx-1 md:mx-4" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
                 placeholder="Search cities..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
-                className="w-full px-4 py-2 pl-10 pr-10 bg-gray-100 dark:bg-gray-800 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+                className="w-full px-3 py-2 pl-9 pr-9 bg-gray-100 dark:bg-gray-800 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm truncate"
               />
               <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
               {searchQuery && (
@@ -222,13 +225,13 @@ export function Navbar({ onMenuClick }) {
                         className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 last:border-0"
                       >
                         <MapPin className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm">{city.name}</div>
+                        <div className="flex-1 min-w-0 pr-2"> {/* Added pr-2 to prevent clipping */}
+                          <div className="font-medium text-sm truncate">{city.name}</div> {/* Added truncate */}
                           <div className="text-xs text-gray-500 truncate">
                             {city.state ? `${city.state}, ` : ''}{city.country}
                           </div>
                         </div>
-                        <span className="text-xs text-gray-400">{city.country}</span>
+                        <span className="text-xs text-gray-400 shrink-0 ml-auto">{city.country}</span>
                       </motion.button>
                     ))}
                   </motion.div>
@@ -247,8 +250,9 @@ export function Navbar({ onMenuClick }) {
             </form>
           </div>
 
-          {/* Right - Icons (Logout removed entirely here) */}
-          <div className="flex items-center gap-1">
+          {/* RIGHT: Actions (Tightly spaced to allow Search to expand) */}
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
+            
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -258,7 +262,7 @@ export function Navbar({ onMenuClick }) {
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </motion.button>
 
-            {/* Notification Bell */}
+            {/* Notification Bell - Tightly spaced */}
             <div className="relative" ref={notificationRef}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -274,6 +278,7 @@ export function Navbar({ onMenuClick }) {
                 )}
               </motion.button>
 
+              {/* Notification Dropdown (Kept intact) */}
               <AnimatePresence>
                 {showNotifications && (
                   <motion.div
@@ -282,7 +287,7 @@ export function Navbar({ onMenuClick }) {
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
                   >
-                    {/* [Notification content stays exactly the same] */}
+                   {/* [Notification content stays exactly the same] */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                       <span className="font-semibold text-sm">Notifications</span>
                       <div className="flex items-center gap-2">
@@ -324,19 +329,16 @@ export function Navbar({ onMenuClick }) {
               </AnimatePresence>
             </div>
 
-            {/* Profile Avatar Button */}
+            {/* Profile Avatar */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/profile')}
-              className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                 {user?.firstName?.[0] || 'U'}
               </div>
-              <span className="hidden md:inline text-sm font-medium">
-                {user?.firstName || 'Guest'}
-              </span>
             </motion.button>
           </div>
         </div>
